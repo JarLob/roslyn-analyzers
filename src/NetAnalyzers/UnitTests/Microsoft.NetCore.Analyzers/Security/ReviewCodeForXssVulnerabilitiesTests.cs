@@ -229,21 +229,5 @@ public partial class WebForm : System.Web.UI.Page
                 },
             }.RunAsync();
         }
-
-        [Fact]
-        public async Task HttpServerUtility_HtmlEncode_StringWriterOverload_NoDiagnostic()
-        {
-            await new VerifyCS.Test
-            {
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultForTaintedDataAnalysis,
-                TestState =
-                {
-                    Sources =
-                    {
-                        SharedCode.WrongSanitizer,
-                    }
-                },
-            }.RunAsync();
-        }
     }
 }
