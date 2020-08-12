@@ -155,5 +155,59 @@ public partial class WebForm : System.Web.UI.Page
 }",
                 GetCSharpResultAt(10, 9, 9, 24, "string HttpResponseWrapper.RedirectLocation", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
+
+        [Fact]
+        public async Task Redirect_IsLocalUrl()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System;
+using Microsoft.AspNetCore.Mvc;
+
+class TestClass : Controller
+{
+    public void SomeAction(string url)
+    {
+        if (Url.IsLocalUrl(url))
+            Redirect(url);
+    }
+}");
+        }
+
+        [Fact]
+        public async Task Redirect_Diagnostic()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System;
+using Microsoft.AspNetCore.Mvc;
+
+class TestClass : Controller
+{
+    public void SomeAction(string url)
+    {
+        Redirect(url);
+    }
+}",
+                GetCSharpResultAt(9, 9, 9, 18, "RedirectResult ControllerBase.Redirect(string url)", "void TestClass.SomeAction(string url)", "string url", "void TestClass.SomeAction(string url)"));
+        }
+
+        [Fact]
+        public async Task Redirect_Conditional_Diagnostic()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System;
+using Microsoft.AspNetCore.Mvc;
+
+class TestClass : Controller
+{
+    public void SomeAction(string url)
+    {
+        if (Url.IsLocalUrl(url))
+            ;
+        else
+            Redirect(url);
+    }
+}",
+                GetCSharpResultAt(12, 13, 12, 22, "RedirectResult ControllerBase.Redirect(string url)", "void TestClass.SomeAction(string url)", "string url", "void TestClass.SomeAction(string url)"));
+        }
     }
 }

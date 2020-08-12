@@ -40,6 +40,15 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     ( "RedirectToRoute", new[] { "routeName" }),
                     ( "RedirectToRoutePermanent", new[] { "routeName" }),
                 });
+            builder.AddSinkInfo(
+                "Microsoft.AspNetCore.Mvc.ControllerBase",
+                SinkKind.Redirect,
+                isInterface: false,
+                isAnyStringParameterInConstructorASink: false,
+                sinkProperties: null,
+                sinkMethodParameters: new[] {
+                    ( "Redirect", new[] { "url" }),
+                });
 
             SinkInfos = builder.ToImmutableAndFree();
         }
